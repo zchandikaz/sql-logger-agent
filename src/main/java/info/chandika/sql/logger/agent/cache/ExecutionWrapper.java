@@ -1,8 +1,7 @@
 package info.chandika.sql.logger.agent.cache;
 
 import info.chandika.sql.logger.agent.lang.SqlSupplier;
-import info.chandika.sql.logger.agent.statement.AbstractStatement;
-import info.chandika.sql.logger.agent.util.Configs;
+import info.chandika.sql.logger.agent.loggable.common.AbstractStatement;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

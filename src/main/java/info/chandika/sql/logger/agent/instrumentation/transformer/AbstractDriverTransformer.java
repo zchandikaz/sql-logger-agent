@@ -3,8 +3,11 @@ package info.chandika.sql.logger.agent.instrumentation.transformer;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
+import javassist.NotFoundException;
+import org.ietf.jgss.GSSCredential;
 
 import java.security.ProtectionDomain;
+import java.util.Properties;
 
 /**
  * @author : chandika
@@ -17,10 +20,10 @@ public abstract class AbstractDriverTransformer {
 
         String methodName = getConnectMethodName();
 
-        CtMethod connectMethod = cc.getDeclaredMethod(methodName);
+        CtMethod connectMethod = getConnectMethod(cp, cc);
         connectMethod.insertBefore("" +
                 "if(((info.chandika.sql.logger.agent.instrumentation.ThreadLocalFlags.ToggleBool)(info.chandika.sql.logger.agent.instrumentation.ThreadLocalFlags#isFirstCall.get())).getAndToggle()){\n" +
-                "    return  new info.chandika.sql.logger.agent.connection.LoggableConnection(this." + methodName + "($$));\n" +
+                "    return info.chandika.sql.logger.agent.loggable.ConnectionWrapper.wrap(this." + methodName + "($$));\n" +
                 "}" +
                 "");
 
@@ -33,5 +36,9 @@ public abstract class AbstractDriverTransformer {
 
     public String getConnectMethodName() {
         return "connect";
+    }
+
+    public CtMethod getConnectMethod(ClassPool cp, CtClass cc) throws NotFoundException {
+        return cc.getDeclaredMethod(getConnectMethodName());
     }
 }

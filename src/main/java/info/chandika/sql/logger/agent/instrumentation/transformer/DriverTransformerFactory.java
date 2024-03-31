@@ -1,6 +1,8 @@
 package info.chandika.sql.logger.agent.instrumentation.transformer;
 
 import info.chandika.sql.logger.agent.instrumentation.transformer.impl.H2DriverTransformer;
+import info.chandika.sql.logger.agent.instrumentation.transformer.impl.MySQLDriverTransformer;
+import info.chandika.sql.logger.agent.instrumentation.transformer.impl.OracleDriverTransformer;
 import info.chandika.sql.logger.agent.instrumentation.transformer.impl.PostgresDriverTransformer;
 
 /**
@@ -15,6 +17,10 @@ public class DriverTransformerFactory {
             return PostgresDriverTransformer.getInstance();
         } else if (driverType == DriverType.H2) {
             return H2DriverTransformer.getInstance();
+        } else if (driverType == DriverType.ORACLE) {
+            return OracleDriverTransformer.getInstance();
+        } else if (driverType == DriverType.MYSQL) {
+            return MySQLDriverTransformer.getInstance();
         }
         throw new RuntimeException("No implementation for " + driverType);
     }

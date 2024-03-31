@@ -2,7 +2,14 @@ package info.chandika.sql.logger.agent.instrumentation.transformer.impl;
 
 import info.chandika.sql.logger.agent.instrumentation.transformer.AbstractDriverTransformer;
 import info.chandika.sql.logger.agent.instrumentation.transformer.DriverType;
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.CtMethod;
+import javassist.NotFoundException;
+import org.ietf.jgss.GSSCredential;
 
+import java.security.ProtectionDomain;
+import java.util.Properties;
 import java.util.logging.Logger;
 
 /**
@@ -26,5 +33,17 @@ public class OracleDriverTransformer extends AbstractDriverTransformer {
     @Override
     public String getClassName() {
         return DriverType.ORACLE.getClassName();
+    }
+
+    @Override
+    public CtMethod getConnectMethod(ClassPool cp, CtClass cc) throws NotFoundException {
+        return cc.getDeclaredMethod(
+                getConnectMethodName(),
+                cp.get(new String[]{
+                        String.class.getName(),
+                        Properties.class.getName(),
+                        GSSCredential.class.getName()
+                })
+        );
     }
 }

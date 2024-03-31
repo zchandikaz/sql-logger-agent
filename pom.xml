@@ -15,12 +15,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>42.3.6</version>
-<!--            <scope>provided</scope>-->
-        </dependency>
-        <dependency>
             <groupId>org.checkerframework</groupId>
             <artifactId>checker-qual</artifactId>
             <version>1.8.1</version>
@@ -30,11 +24,6 @@
             <groupId>com.github.vldrus</groupId>
             <artifactId>cachedrowset-wrapper</artifactId>
             <version>1.0.2</version>
-        </dependency>
-        <dependency>
-            <groupId>io.lettuce</groupId>
-            <artifactId>lettuce-core</artifactId>
-            <version>6.2.0.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -52,11 +41,11 @@
             <version>3.23.1-GA</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/net.bytebuddy/byte-buddy -->
-<dependency>
-    <groupId>net.bytebuddy</groupId>
-    <artifactId>byte-buddy</artifactId>
-    <version>1.14.5</version>
-</dependency>
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+            <version>1.14.5</version>
+        </dependency>
 
     </dependencies>
 
@@ -67,7 +56,7 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
                     <archive>
-                         <manifestEntries>
+                        <manifestEntries>
                             <Can-Retransform-Classes>true</Can-Retransform-Classes>
                             <Can-Redefine-Classes>true</Can-Redefine-Classes>
                             <Agent-Class>info.chandika.sql.logger.agent.instrumentation.DriverAgent</Agent-Class>

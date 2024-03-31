@@ -1,9 +1,9 @@
 package info.chandika.sql.logger.agent.connection;
 
 import info.chandika.sql.logger.agent.logger.ConnectionLogger;
-import info.chandika.sql.logger.agent.statement.WrappedCallableStatement;
-import info.chandika.sql.logger.agent.statement.WrappedPreparedStatement;
-import info.chandika.sql.logger.agent.statement.WrappedStatement;
+import info.chandika.sql.logger.agent.statement.LoggableCallableStatement;
+import info.chandika.sql.logger.agent.statement.LoggablePreparedStatement;
+import info.chandika.sql.logger.agent.statement.LoggableStatement;
 
 import java.sql.*;
 import java.util.Map;
@@ -16,23 +16,23 @@ import java.util.concurrent.Executor;
  **/
 
 
-public class WrappedConnection implements Connection {
+public class LoggableConnection implements Connection {
     private final Connection con;
 
-    public WrappedConnection(Connection con) {
+    public LoggableConnection(Connection con) {
         this.con = con;
     }
 
     private Statement wrap(Statement st) {
-        return new WrappedStatement(st);
+        return new LoggableStatement(st);
     }
 
     private PreparedStatement wrap(PreparedStatement ps, String sql) {
-        return new WrappedPreparedStatement(ps, sql);
+        return new LoggablePreparedStatement(ps, sql);
     }
 
     private CallableStatement wrap(CallableStatement cs, String sql) {
-        return new WrappedCallableStatement(cs, sql);
+        return new LoggableCallableStatement(cs, sql);
     }
 
     @Override

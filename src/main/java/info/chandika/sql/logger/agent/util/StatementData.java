@@ -16,7 +16,7 @@ public class StatementData {
     }
 
     public String getSqlValue() {
-        if(data==null){
+        if (data == null) {
             return "null";
         }
         return "'" + data.toString() + "'";

@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author : chandika
@@ -17,10 +19,10 @@ import java.util.Map;
 
 
 public abstract class AbstractStatement {
-
+    private static final Logger LOGGER = Logger.getLogger(AbstractStatement.class.getName());
     public static String EMPTY_BATCH_PREFIX = "[EMPTY-BATCH] ";
     public static String TEST_SQL = "select 1";
-    private Map<String,String> richSqlMap = new HashMap<>();
+    private Map<String, String> richSqlMap = new HashMap<>();
 
 
     private List<Map<Integer, StatementData>> statementDataWithParamIndexList = Configs.IS_DATA_STORED_STATEMENT_ENABLED ? new ArrayList<>() : null;
@@ -52,7 +54,7 @@ public abstract class AbstractStatement {
         }
     }
 
-    public void storeData(String parameterName, Class dataType, Object data) {
+    public void storeData(String parameterName, Class<?> dataType, Object data) {
         checkBatch();
         if (Configs.IS_DATA_STORED_STATEMENT_ENABLED) {
             statementDataWithParamNameList.get(currentBatchIndex).put(parameterName, new StatementData(dataType, data));
@@ -66,7 +68,7 @@ public abstract class AbstractStatement {
         }
     }
 
-    public void storeData(int parameterIndex, Class dataType, Object data) {
+    public void storeData(int parameterIndex, Class<?> dataType, Object data) {
         checkBatch();
         if (Configs.IS_DATA_STORED_STATEMENT_ENABLED) {
             statementDataWithParamIndexList.get(currentBatchIndex).put(parameterIndex, new StatementData(dataType, data));
@@ -78,9 +80,9 @@ public abstract class AbstractStatement {
             return;
         }
         if (sql != null) {
-            if(statementDataWithParamIndexList==null){
+            if (statementDataWithParamIndexList == null) {
                 ConnectionLogger.logSQL(sql);
-            }else {
+            } else {
                 if (statementDataWithParamIndexList.isEmpty()) {
                     ConnectionLogger.logSQL(EMPTY_BATCH_PREFIX + sql);
                 }
@@ -94,8 +96,26 @@ public abstract class AbstractStatement {
         }
     }
 
-    public String getSqlWithData(String sql, int batchIndex){
-        return richSqlMap.computeIfAbsent(batchIndex+"_"+sql, key->getSqlWithDataOriginal(sql, batchIndex));
+    public String getSqlWithData(String sql, int batchIndex) {
+        return richSqlMap.computeIfAbsent(batchIndex + "_" + sql, key -> getSqlWithDataOriginal(sql, batchIndex));
+    }
+
+    private String getParameterDataSql(int batchIndex, int parameterIndex) {
+        try {
+            return statementDataWithParamIndexList.get(batchIndex).get(parameterIndex).getSqlValue();
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "", e);
+            return "#";
+        }
+    }
+
+    private String getParameterDataSql(int batchIndex, String paramName) {
+        try {
+            return statementDataWithParamNameList.get(batchIndex).get(paramName).getSqlValue();
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "", e);
+            return "#";
+        }
     }
 
     private String getSqlWithDataOriginal(String sql, int batchIndex) {
@@ -106,11 +126,11 @@ public abstract class AbstractStatement {
                 int index = oroginalSql.indexOf("?");
                 String partBefore = oroginalSql.substring(0, index);
                 String partAfter = oroginalSql.substring(index + "?".length());
-                oroginalSql = partBefore + " " + statementDataWithParamIndexList.get(batchIndex).get(i).getSqlValue() + " " + partAfter;
+                oroginalSql = partBefore + " " + getParameterDataSql(batchIndex, i) + " " + partAfter;
                 i = i + 1;
             }
             for (String paramName : statementDataWithParamNameList.get(batchIndex).keySet()) {
-                oroginalSql = oroginalSql.replaceAll(":" + paramName, statementDataWithParamNameList.get(batchIndex).get(paramName).getSqlValue());
+                oroginalSql = oroginalSql.replaceAll(":" + paramName, getParameterDataSql(batchIndex, paramName));
             }
             return oroginalSql;
         } catch (Exception e) {
@@ -119,7 +139,7 @@ public abstract class AbstractStatement {
         return "ERROR IN GENERATING SQL";
     }
 
-    public int getBatchCount(){
-        return Configs.IS_DATA_STORED_STATEMENT_ENABLED? statementDataWithParamNameList.size():-1;
+    public int getBatchCount() {
+        return Configs.IS_DATA_STORED_STATEMENT_ENABLED ? statementDataWithParamNameList.size() : -1;
     }
 }

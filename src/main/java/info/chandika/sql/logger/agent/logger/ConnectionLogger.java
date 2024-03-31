@@ -54,9 +54,9 @@ public class ConnectionLogger {
         return caller;
     }
 
-    private static boolean isCodebasePackage(String fqcn){
-        for(String codebasePackage:Configs.CODEBASE_PACKAGES){
-            if(fqcn.startsWith(codebasePackage)){
+    private static boolean isCodebasePackage(String fqcn) {
+        for (String codebasePackage : Configs.CODEBASE_PACKAGES) {
+            if (fqcn.startsWith(codebasePackage)) {
                 return true;
             }
         }
@@ -73,7 +73,7 @@ public class ConnectionLogger {
             totalConCount = OPEN_CONNECTION_COUNT.decrementAndGet();
             inheritedThreadConCount = OPEN_INHERITED_CONNECTION_COUNT_IN_THREAD.get().decrementAndGet();
         }
-        LOGGER.log(Level.INFO, "[{0}] Connection-Event: {1} | Caller: {2} | Cons: [all={3}, thread={4}]", new Object[]{ Thread.currentThread().getId(), event.name(), getCaller(), totalConCount, inheritedThreadConCount});
+        LOGGER.log(Level.INFO, "[{0}] Connection-Event: {1} | Caller: {2} | Cons: [all={3}, thread={4}]", new Object[]{Thread.currentThread().getId(), event.name(), getCaller(), totalConCount, inheritedThreadConCount});
     }
 
     public enum ConnectionEvent {

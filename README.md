@@ -48,5 +48,5 @@ java -javaagent:path/to/sql-logger-agent.jar \
 
 # Downloads
 
-- [latest version](releases/latest/sql-logger-agent.jar)
+- [latest version](releases/latest/sql-logger-agent.jar?raw=true)
 
